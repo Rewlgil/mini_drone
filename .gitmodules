@@ -1,0 +1,6 @@
+[submodule "esp_transceiver/example/arduino-esp32"]
+	path = esp_transceiver/example/arduino-esp32
+	url = https://github.com/espressif/arduino-esp32.git
+[submodule "esp_transceiver/example/JoyStick"]
+	path = esp_transceiver/example/JoyStick
+	url = https://github.com/bobboteck/JoyStick.git
