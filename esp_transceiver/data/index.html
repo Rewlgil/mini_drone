@@ -1,0 +1,59 @@
+<!DOCTYPE HTML>
+
+<html>
+    <head>
+        <title>Joy</title>
+        <meta charset="utf-8">
+        <script src="/joy.js"></script>
+    </head>
+    <body>
+        <div id="joy1Div" style="width:150px;height:150px;margin:25px;position:fixed;bottom:30px;left:30px;"></div>
+        <div id="joy2Div" style="width:150px;height:150px;margin:25px;position:fixed;bottom:30px;right:30px;"></div>
+
+        <figure>
+            <div id="stream-container" style="position:fixed;top:0px;left:400px;">
+                <img id="stream" crossorigin="">
+            </div>
+        </figure>
+
+        <script type="text/javascript">
+
+const origin = window.location.hostname;
+const streamUrl = `http://${origin}:81/stream`;
+document.getElementById("stream").src = streamUrl;
+
+var joy1Param = { "title": "joystick1",
+                  "internalFillColor" : "#00AA00",
+                  "internalStrokeColor" : "#003300",
+                  "externalStrokeColor" : "#008000"
+                };
+var Joy1 = new JoyStick('joy1Div', joy1Param);
+
+var joy2Param = { "title": "joystick2",
+                  "internalFillColor" : "#AA0000",
+                  "internalStrokeColor" : "#330000",
+                  "externalStrokeColor" : "#800000"
+                };
+var Joy2 = new JoyStick('joy2Div', joy2Param);
+
+function sentJoyPos()
+{
+    const response = fetch('/',
+    {
+        method: "POST",
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(
+        {
+            "x1": Number(Joy1.GetX()),
+            "y1": Number(Joy1.GetY()),
+            "x2": Number(Joy2.GetX()),
+            "y2": Number(Joy2.GetY())
+        }),
+    });
+}
+
+setInterval(sentJoyPos, 500);
+
+        </script>
+    </body>
+</html>
