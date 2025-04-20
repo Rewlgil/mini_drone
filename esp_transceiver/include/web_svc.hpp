@@ -1,5 +1,5 @@
 /**
- * @file   web_svc.c
+ * @file   web_svc.hpp
  * @brief  To provides a web service for remote control applications. Recieve 
  *         virtual joystick input from a client and streaming live video back in real time.
  * @author Rewlgil
@@ -28,13 +28,12 @@
  * SOFTWARE.
  */
 
- /*============< INCLUDE FILE >===================================================================*/
+#ifndef _WEB_SVC_HPP_
+#define _WEB_SVC_HPP_
 
- #include <Arduino.h>
- #include <WiFi.h>
- #include "secret.h"
- #include "cam.hpp"
- #include "web_svc.hpp"
+/*============< INCLUDE FILE >===================================================================*/
+
+#include "common.h"
 
 /*============< DATA TYPE DEFINITION >===========================================================*/
 /* None */
@@ -52,79 +51,17 @@
 /* None */
 
 /*============< PUBLIC DATA DECLARATION >========================================================*/
-/* None */
+
+extern const uint8_t u1s_index_html_start[] asm("_binary_data_index_html_start");   /**< Binary data embedded in FLASH section */
+extern const uint8_t u1s_index_html_end[]   asm("_binary_data_index_html_end");     /**< Binary data embedded in FLASH section */
+extern const uint8_t u1s_script_js_start[]  asm("_binary_data_joy_js_start");       /**< Binary data embedded in FLASH section */
+extern const uint8_t u1s_script_js_end[]    asm("_binary_data_joy_js_end");         /**< Binary data embedded in FLASH section */
 
 /*============< FUNCTION PROTOTYPES >============================================================*/
-/* None */
+
+extern esp_err_t start_camera_server(void);
 
 /*============< PRIVATE DATA DEFINITION >========================================================*/
 /* None */
 
-/*============< FUNCTION DEFINITION >============================================================*/
-
-void setup()
-{
-    wl_status_t wifi_status;
-    IPAddress ip_addr;
-    esp_err_t ent_cam_init_sts;
-    esp_err_t ent_server_sts;
-
-    /*====< INPUT >==========================================================*/
-    /* None */
-
-    /*====< OPERATION >======================================================*/
-
-    Serial.begin(115200);
-    WiFi.begin(ssid, password);
-    WiFi.setSleep(false);
-    
-    Serial.print("WiFi connecting");
-    wifi_status = WiFi.status();
-    while (wifi_status != WL_CONNECTED)
-    {
-        delay(500);
-        Serial.print(".");
-        wifi_status = WiFi.status();
-    }
-    Serial.println("\nWiFi connected");
-    
-    /* Initialize camera module */
-    ent_cam_init_sts = camera_init();
-
-    if (ent_cam_init_sts == ESP_OK)
-    {
-        /* Start camera webserver */
-        ent_server_sts = start_camera_server();
-    }
-    else
-    {
-        log_e("Fail to init camera module");
-    }
-
-    if (ent_server_sts == ESP_OK)
-    {
-        ip_addr = WiFi.localIP();
-        Serial.print("Web server is ready at 'http://");
-        Serial.println(ip_addr);
-    }
-    else
-    {
-        log_e("Fail to start web server");
-    }
-    
-    /*====< OUTPUT >=========================================================*/
-    /* None */
-}
-
-void loop() 
-{
-    /*====< INPUT >==========================================================*/
-    /* None */
-
-    /*====< OPERATION >======================================================*/
-    
-    delay(100);
-
-    /*====< OUTPUT >=========================================================*/
-    /* None */
-}
+#endif

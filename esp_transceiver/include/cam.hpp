@@ -1,7 +1,6 @@
 /**
- * @file   web_svc.c
- * @brief  To provides a web service for remote control applications. Recieve 
- *         virtual joystick input from a client and streaming live video back in real time.
+ * @file   cam.hpp
+ * @brief  Camera driver module
  * @author Rewlgil
  * @date   15 Apr 2025
  * @note   This code implement base on example from 
@@ -28,13 +27,12 @@
  * SOFTWARE.
  */
 
- /*============< INCLUDE FILE >===================================================================*/
+#ifndef _CAM_HPP_
+#define _CAM_HPP_
 
- #include <Arduino.h>
- #include <WiFi.h>
- #include "secret.h"
- #include "cam.hpp"
- #include "web_svc.hpp"
+/*============< INCLUDE FILE >===================================================================*/
+
+#include "common.h"
 
 /*============< DATA TYPE DEFINITION >===========================================================*/
 /* None */
@@ -43,7 +41,31 @@
 /* None */
 
 /*============< MACRO CONSTANT DEFINITION >======================================================*/
-/* None */
+
+/* Define camera hardware connection */
+#define PWDN_GPIO_NUM           (32)
+#define RESET_GPIO_NUM          (-1)
+#define XCLK_GPIO_NUM           (0)
+#define SIOD_GPIO_NUM           (26)
+#define SIOC_GPIO_NUM           (27)
+#define Y9_GPIO_NUM             (35)
+#define Y8_GPIO_NUM             (34)
+#define Y7_GPIO_NUM             (39)
+#define Y6_GPIO_NUM             (36)
+#define Y5_GPIO_NUM             (21)
+#define Y4_GPIO_NUM             (19)
+#define Y3_GPIO_NUM             (18)
+#define Y2_GPIO_NUM             (5)
+#define VSYNC_GPIO_NUM          (25)
+#define HREF_GPIO_NUM           (23)
+#define PCLK_GPIO_NUM           (22)
+#define LED_GPIO_NUM            (4)
+
+#define XCLK_FREQ_HZ            (20000000)
+#define CAM_JPEG_QUALITY        (12)
+#define NUM_FRAME_BUFF_ALLOC    (1)
+
+#define JPEG_CONVERT_QUALITY    (80)
 
 /*============< MACRO FUNCTION DEFINITION >======================================================*/
 /* None */
@@ -55,76 +77,10 @@
 /* None */
 
 /*============< FUNCTION PROTOTYPES >============================================================*/
-/* None */
+
+extern esp_err_t camera_init(void);
 
 /*============< PRIVATE DATA DEFINITION >========================================================*/
 /* None */
 
-/*============< FUNCTION DEFINITION >============================================================*/
-
-void setup()
-{
-    wl_status_t wifi_status;
-    IPAddress ip_addr;
-    esp_err_t ent_cam_init_sts;
-    esp_err_t ent_server_sts;
-
-    /*====< INPUT >==========================================================*/
-    /* None */
-
-    /*====< OPERATION >======================================================*/
-
-    Serial.begin(115200);
-    WiFi.begin(ssid, password);
-    WiFi.setSleep(false);
-    
-    Serial.print("WiFi connecting");
-    wifi_status = WiFi.status();
-    while (wifi_status != WL_CONNECTED)
-    {
-        delay(500);
-        Serial.print(".");
-        wifi_status = WiFi.status();
-    }
-    Serial.println("\nWiFi connected");
-    
-    /* Initialize camera module */
-    ent_cam_init_sts = camera_init();
-
-    if (ent_cam_init_sts == ESP_OK)
-    {
-        /* Start camera webserver */
-        ent_server_sts = start_camera_server();
-    }
-    else
-    {
-        log_e("Fail to init camera module");
-    }
-
-    if (ent_server_sts == ESP_OK)
-    {
-        ip_addr = WiFi.localIP();
-        Serial.print("Web server is ready at 'http://");
-        Serial.println(ip_addr);
-    }
-    else
-    {
-        log_e("Fail to start web server");
-    }
-    
-    /*====< OUTPUT >=========================================================*/
-    /* None */
-}
-
-void loop() 
-{
-    /*====< INPUT >==========================================================*/
-    /* None */
-
-    /*====< OPERATION >======================================================*/
-    
-    delay(100);
-
-    /*====< OUTPUT >=========================================================*/
-    /* None */
-}
+#endif
